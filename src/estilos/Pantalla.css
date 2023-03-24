@@ -1,5 +1,7 @@
 .input {
     height: 75px;
+    overflow: auto;
+    white-space: nowrap;
     border-radius: 50px;
     margin-bottom: 20px;
     display: flex;

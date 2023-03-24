@@ -1,35 +1,46 @@
 import './App.css';
-import FreeCodeCampLogo from './imagenes/FreeCodeCamp_logo.png';
 import { useState } from 'react';
 import { evaluate } from 'mathjs';
+import ImgLogo from './componentes/ImgLogo';
 import Boton from './componentes/Botones';
 import Pantalla from './componentes/Pantalla';
 import BotonClear from './componentes/BotonClear';
+import Historial from './componentes/historial';
 
 function App() {
 
-  const [input, setImput] = useState('');
+  const [input, setInput] = useState('');
+
+  const [historial, setHistorial] = useState([]);
+
 
   const agregarInput = valor => {
-    setImput (input + valor);
-  };
-
-  const calcularResultado = () => {
-    if (input) {
-      setImput(evaluate(input));
-    } else {
-      alert ('Por favor ingrese valores para realizar los cálculos')
+    const inputString = input.toString();
+    if ((['+', '-', '*', '/'].includes(inputString.slice(-1)) && ['+', '-', '*', '/'].includes(valor)) || (inputString === '' && ['*', '/'].includes(valor))) {
+      alert ('Error')
+    } else { 
+      setInput (inputString + valor);
     }
   }
 
+  const calcularResultado = () => {
+    if (input) {
+      const resultado = evaluate(input);
+      setInput(resultado);
+      setHistorial([...historial, { operacion: input, resultado }]);
+    } else {
+      alert('Por favor ingrese valores para realizar los cálculos');
+    }
+  };
+
+  const borrarCaracter = () => {
+    setInput(input.slice(0, -1));
+  }
+  
+
   return (
     <div className='App'>
-      <div className='freecodecamp-logo-contenedor'>
-        <img 
-          src={FreeCodeCampLogo} 
-          className='freecodecamp-logo' 
-          alt="logo de freecodecamp" />
-      </div>
+      <ImgLogo/>
       <div className='contenedor-calculadora'>
         <Pantalla input={input}/>
         <div className='fila'> 
@@ -57,9 +68,11 @@ function App() {
           <Boton manejarClic={agregarInput}>/</Boton>
         </div>
         <div className='fila'> 
-          <BotonClear manejarClear={() => setImput('')}>
+          <BotonClear manejarClear={() => setInput('')}>
             clear
           </BotonClear>
+          <Boton manejarClic={borrarCaracter}>Borrar</Boton>
+          {/* <Historial historial={historial} />  */}
         </div>
       </div>
     </div>
